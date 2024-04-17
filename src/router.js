@@ -5,7 +5,7 @@ import AnotherSite from "./sites/anotherSite.vue"
 
 const routes = [
   { path: '/', component: MainSite },
-  { path: '/box/:id', component: AnotherSite },
+  { path: '/box/:id', component: MainSite },
 ]
 
 const router = createRouter({
