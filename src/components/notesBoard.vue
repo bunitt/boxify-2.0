@@ -61,7 +61,7 @@
 
     async function deleteItemFromBox(item) {
         const confirmText = "Are you sure you want to delete?"
-        if (confirm(confirmText) == true) {
+        if (confirm(confirmText)) {
             await client.request(deleteItem('item', item.id))
             allItems.value = await client.request(readItems('item'))
         }

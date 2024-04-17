@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import MainSite from "./mainSite.vue"
-import AnotherSite from "./anotherSite.vue"
+import MainSite from "./sites/mainSite.vue"
+import AnotherSite from "./sites/anotherSite.vue"
 
 const routes = [
   { path: '/', component: MainSite },

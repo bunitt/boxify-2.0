@@ -23,32 +23,16 @@
     const allBox = ref([])
     const text = ref("")
     const items = [
-        {id:1, name: 'Standard'},
-        {id:2,name: 'List'},
-        {id:3,name: 'Board'}]
+        {id:0, name: 'Standard'},
+        {id:1, name: 'List'},
+        {id:2, name: 'Board'}]
     const select = ref({id: 1, value: 'Standard'})
 
     async function addBox() {
-        let temp = -1
-        console.log(select.value)
-        console.log(select.value.value)
-        switch (select.value.value) {
-            case "Standard":
-                temp = 0
-                break
-            case "List": 
-                temp = 1
-                break
-            case "Board":
-                temp = 2
-                break
-        }
-
         console.log(temp)
         if (text.value != "") {
-            await client.request(createItem('box', {boxTitle: text.value, boxType: temp, isEditing: 0}))
+            await client.request(createItem('box', {boxTitle: text.value, boxType: select.value.id, isEditing: 0}))
             text.value = ''
-            //allBox.value = await client.request(readItems('box'))
             location.reload();
         }
     }
