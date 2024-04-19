@@ -16,22 +16,20 @@
 </template>
 
 <script setup>
-    import {onMounted, ref} from 'vue'
-    import { createDirectus, createItem, deleteItem, deleteItems, readItems, rest, updateItem } from '@directus/sdk'
-    
-    const client = createDirectus('http://localhost:8055/').with(rest());
-    const allBox = ref([])
+    import {ref} from 'vue'
+    import { useBoxStore } from './stores/box.js';
+    const boxFromStore = useBoxStore()
+
     const text = ref("")
     const items = [
         {id:0, name: 'Standard'},
         {id:1, name: 'List'},
         {id:2, name: 'Board'}]
-    const select = ref({id: 1, value: 'Standard'})
+    const select = ref({id: 0, value: 'Standard'})
 
     async function addBox() {
-        console.log(temp)
         if (text.value != "") {
-            await client.request(createItem('box', {boxTitle: text.value, boxType: select.value.id, isEditing: 0}))
+            boxFromStore.addBox(text.value, select.value.id)
             text.value = ''
             location.reload();
         }

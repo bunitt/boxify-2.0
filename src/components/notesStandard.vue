@@ -21,8 +21,10 @@
 
 <script setup>
     import { onMounted, ref } from 'vue'    
-    import { createDirectus, readItems, rest, deleteItem } from '@directus/sdk'
-    const client = createDirectus('http://localhost:8055/').with(rest());
+    import { useBoxStore } from './stores/box.js';
+    import { useNotesStore } from './stores/notes';
+    const notesFromStore = useNotesStore()
+    const boxFromStore = useBoxStore()
 
     const allBox = ref([])
     const allItems = ref([])
@@ -31,8 +33,8 @@
     async function deleteItemFromBox(item) {
         const confirmText = "Are you sure you want to delete?"
         if (confirm(confirmText)) {
-            await client.request(deleteItem('item', item.id))
-            allItems.value = await client.request(readItems('item'))
+            await notesFromStore.deleteNote(item)
+            allItems.value = await notesFromStore.readAllNotes()
         }
     }
 
@@ -40,16 +42,14 @@
         isSorting.value = !isSorting.value
         
         if (isSorting.value) {
-            allItems.value = await client.request(readItems('item', {
-                sort: ['itemName']
-            }))
+            allItems.value = await notesFromStore.sortNotes()
         } else {
-            allItems.value = await client.request(readItems('item'))
+            allItems.value = await notesFromStore.readAllNotes()
         }
     }
 
     onMounted(async () => {
-        allBox.value = await client.request(readItems('box'));
-        allItems.value = await client.request(readItems('item'))
+        allBox.value = await boxFromStore.readAllBox()
+        allItems.value = await notesFromStore.readAllNotes()
     })
 </script>

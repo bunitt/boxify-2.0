@@ -46,9 +46,14 @@
 
 <script setup>
     import { onMounted, ref } from 'vue'    
-    import { createDirectus, readItems, rest, deleteItem, updateItem } from '@directus/sdk'
     import draggable from 'vuedraggable'
-    const client = createDirectus('http://localhost:8055/').with(rest());
+    import { useBoxStore } from './stores/box.js';
+    import { useNotesStore } from './stores/notes.js'
+
+
+    const boxFromStore = useBoxStore()
+    const notesFromStore = useNotesStore()
+    notesFromStore.readAllNotes()
 
     const first_column = ref([])
     const second_column = ref([])
@@ -62,8 +67,8 @@
     async function deleteItemFromBox(item) {
         const confirmText = "Are you sure you want to delete?"
         if (confirm(confirmText)) {
-            await client.request(deleteItem('item', item.id))
-            allItems.value = await client.request(readItems('item'))
+            notesFromStore.deleteNote(item)
+            allItems.value = await notesFromStore.readAllNotes()
         }
 
         loadOnBoardType()
@@ -73,23 +78,17 @@
         allItems.value.forEach(element => {
             for (let i = 0; i < first_column.value.length; i++) {
                 if (element == first_column.value.at(i)){
-                    client.request(updateItem('item', element.id, {
-                        col: 1
-                    }))
+                    notesFromStore.saveNotesPosition(element, 1)
                 }
             }
             for (let i = 0; i < second_column.value.length; i++) {
                 if (element == second_column.value.at(i)){
-                    client.request(updateItem('item', element.id, {
-                        col: 2
-                    }))
+                    notesFromStore.saveNotesPosition(element, 2)
                 }
             }
             for (let i = 0; i < third_column.value.length; i++) {
                 if (element == third_column.value.at(i)){
-                    client.request(updateItem('item', element.id, {
-                        col: 3
-                    }))
+                    notesFromStore.saveNotesPosition(element, 3)
                 }
             }
         });
@@ -115,8 +114,9 @@
     }
 
     onMounted(async () => {
-        allBox.value = await client.request(readItems('box'));
-        allItems.value = await client.request(readItems('item'))
+        allBox.value = await boxFromStore.allBox()
+        allItems.value = await notesFromStore.readAllNotes()
+        console.log(allItems.value)
 
         loadOnBoardType()
     })

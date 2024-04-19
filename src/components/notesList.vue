@@ -25,34 +25,25 @@
 
 <script setup>
     import { onMounted, ref } from 'vue'    
-    import { createDirectus, readItems, rest, deleteItems, updateItem } from '@directus/sdk'
-    const client = createDirectus('http://localhost:8055/').with(rest());
+    import { useBoxStore } from './stores/box.js';
+    import { useNotesStore } from './stores/notes';
+    const notesFromStore = useNotesStore()
+    const boxFromStore = useBoxStore()
 
     const allBox = ref([])
     const allItems = ref([])
     const isSorting = ref(false)
 
     async function characterizedNote(note) {
-        if (note.isCharacterize == 0) {
-            await client.request(updateItem('item', note.id, {boxId: note.boxId, itemName: note.itemName, isCharacterize: 1}))
-            allItems.value = await client.request(readItems('item'))
-        } else {
-            await client.request(updateItem('item', note.id, {boxId: note.boxId, itemName: note.itemName, isCharacterize: 0}))
-            allItems.value = await client.request(readItems('item'))
-        }
+        await notesFromStore.characterizeNote(note)
+        allItems.value = await notesFromStore.readAllNotes()
     }
 
     async function deleteAllCharacterized() {
         const confirmText = "Are you sure you want to delete?"
         if (confirm(confirmText)) {
-            await client.request(deleteItems('item', {
-                filter: {
-                    isCharacterize: {
-                        _eq: 1
-                    }
-                }
-            }))
-            allItems.value = await client.request(readItems('item'))
+            await notesFromStore.deleteAllCharacterizedNotes()
+            allItems.value = await notesFromStore.readAllNotes()
         }
     }
 
@@ -60,16 +51,14 @@
         isSorting.value = !isSorting.value
         
         if (isSorting.value) {
-            allItems.value = await client.request(readItems('item', {
-                sort: ['itemName']
-            }))
+            allItems.value = await notesFromStore.sortNotes()
         } else {
-            allItems.value = await client.request(readItems('item'))
+            allItems.value = await notesFromStore.readAllNotes()
         }
     }
 
     onMounted(async () => {
-        allBox.value = await client.request(readItems('box'));
-        allItems.value = await client.request(readItems('item'))
+        allBox.value = await boxFromStore.readAllBox()
+        allItems.value = await notesFromStore.readAllNotes()
     })
 </script>

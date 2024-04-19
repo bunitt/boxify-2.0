@@ -9,9 +9,9 @@
 </template>
 
 <script setup>
-    import { ref, onMounted } from 'vue'
-    import { createDirectus, createItem, readItems, deleteItem, rest, updateItem, deleteItems } from '@directus/sdk'
-    const client = createDirectus('http://localhost:8055/').with(rest());
+    import { ref } from 'vue'
+    import { useNotesStore } from './stores/notes';
+    const notesFromStore = useNotesStore()
 
     const text = ref("")
     const allBox = ref([])
@@ -20,9 +20,9 @@
 
     async function addNewItem() {
         if (text.value != "") {
-            await client.request(createItem('item', {itemName: text.value, boxId: uri[4], isCharacterize: 0, col: 1}))
+            await notesFromStore.addNewNote(text.value, uri[4])
             text.value = ''
-            allItems.value = await client.request(readItems('item'))
+            allItems.value = await notesFromStore.readAllNotes()
         }
         location.reload()
     }

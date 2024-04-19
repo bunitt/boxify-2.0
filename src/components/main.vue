@@ -14,14 +14,14 @@
     import notesStandard from './notesStandard.vue';
     import notesList from './notesList.vue';
     import notesBoard from './notesBoard.vue';
-    import { onMounted, ref } from 'vue'    
-    import { createDirectus, readItems, rest } from '@directus/sdk'
-    const client = createDirectus('http://localhost:8055/').with(rest());
+    import { onMounted, ref } from 'vue'
+    import { useBoxStore } from './stores/box.js';
 
+    const boxFromStore = useBoxStore()
     const allBox = ref([])
 
     onMounted(async () => {
-        allBox.value = await client.request(readItems('box'));
+        allBox.value = await boxFromStore.readAllBox()
     })
 
 </script>

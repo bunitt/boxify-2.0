@@ -27,8 +27,11 @@
 
 <script setup>
     import { onMounted, ref } from 'vue'    
-    import { createDirectus, readItems, rest, deleteItem, deleteItems, } from '@directus/sdk'
-    const client = createDirectus('http://localhost:8055/').with(rest());
+    import { useBoxStore } from './stores/box.js';
+    import { useNotesStore } from './stores/notes';
+    const notesFromStore = useNotesStore()
+    const boxFromStore = useBoxStore()
+
     const imgs = ["/src/img/box-solid.svg", "/src/img/list-solid.svg", "/src/img/flipboard.svg"]
 
     const allBox = ref([])
@@ -39,21 +42,14 @@
     let columnThree = 0
 
     async function deleteBox(item) {
-      await client.request(deleteItem('box', item.id))
-      await client.request(deleteItems('item', {
-        filter: {
-          boxId: {
-            _eq: item.id,
-          },
-        },
-      }))
-      allBox.value = await client.request(readItems('box'))
+        await boxFromStore.deleteBox(item.id)
+        allBox.value = await boxFromStore.readAllBox()
     }
 
     async function changeEditState(item) {
       if (item.isEditing == 1) {
         item.isEditing = 0
-        await client.request(updateItem('box', item.id, {boxTitle: item.boxTitle, isEditing: 0}))
+        await boxFromStore.updateBoxTitle(item)
       } else {
         item.isEditing = 1
       }
@@ -81,17 +77,15 @@
         isSorting.value = !isSorting.value
         
         if (isSorting.value) {
-            allBox.value = await client.request(readItems('box', {
-                sort: ['boxTitle']
-            }))
+            allBox.value = await boxFromStore.sortBox()
         } else {
-            allBox.value = await client.request(readItems('box'))
+            allBox.value = await boxFromStore.readAllBox()
         }
     }
 
     onMounted(async () => {
-        allBox.value = await client.request(readItems('box'));
-        allItems.value = await client.request(readItems('item'))
+        allBox.value = await boxFromStore.readAllBox()
+        allItems.value = await notesFromStore.readAllNotes()
     })
 
 </script>
