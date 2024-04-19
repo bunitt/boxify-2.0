@@ -20,6 +20,7 @@
 
     async function addNewItem() {
         if (text.value != "") {
+            uri = window.location.href.split('/')
             await notesFromStore.addNewNote(text.value, uri[4])
             text.value = ''
             allItems.value = await notesFromStore.readAllNotes()

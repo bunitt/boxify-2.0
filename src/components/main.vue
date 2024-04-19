@@ -17,9 +17,10 @@
     import { onMounted, ref } from 'vue'
     import { useBoxStore } from './stores/box.js';
 
+
     const boxFromStore = useBoxStore()
     const allBox = ref([])
-
+    
     onMounted(async () => {
         allBox.value = await boxFromStore.readAllBox()
     })

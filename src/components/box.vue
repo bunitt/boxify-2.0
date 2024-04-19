@@ -42,8 +42,12 @@
     let columnThree = 0
 
     async function deleteBox(item) {
-        await boxFromStore.deleteBox(item.id)
-        allBox.value = await boxFromStore.readAllBox()
+        const confirmText = "Are you sure you want to delete?"
+        if (confirm(confirmText)) {
+            await boxFromStore.deleteBox(item.id)
+            allBox.value = await boxFromStore.readAllBox()
+        }
+
     }
 
     async function changeEditState(item) {

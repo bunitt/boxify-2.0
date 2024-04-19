@@ -5,7 +5,9 @@ let boxFromDatabase = await client.request(readItems('box'))
 
 export const useBoxStore = defineStore('box', {
     state: () => ({
-        allBox: boxFromDatabase
+        allBox: boxFromDatabase,
+        boardTypeHandler: [],
+        lastBox:[],
     }),
     actions: {
         async readAllBox() {
@@ -13,6 +15,15 @@ export const useBoxStore = defineStore('box', {
         },
         async addBox(text, selectValue) {
             await client.request(createItem('box', {boxTitle: text, boxType: selectValue, isEditing: 0}))
+            this.boardTypeHandler = await this.readAllBox()
+            for (let i = 0; i < this.boardTypeHandler.length; i++) {
+                this.lastBox = this.boardTypeHandler[i]
+            }
+            if (this.lastBox.boxType == 2) {
+                await client.request(createItem('columns', {boxId: this.lastBox.id, columnName: "First", columnNumber: 1, isEditing:0}))
+                await client.request(createItem('columns', {boxId: this.lastBox.id, columnName: "Second", columnNumber: 2, isEditing:0}))
+                await client.request(createItem('columns', {boxId: this.lastBox.id, columnName: "Third", columnNumber: 3, isEditing:0}))
+            }
         },
         async deleteBox(id) {
             await client.request(deleteItem('box', id))
