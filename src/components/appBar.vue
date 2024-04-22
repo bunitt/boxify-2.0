@@ -29,7 +29,7 @@
 
     async function addBox() {
         if (text.value != "") {
-            boxFromStore.addBox(text.value, select.value.id)
+            await boxFromStore.addBox(text.value, select.value.id)
             text.value = ''
             location.reload();
         }

@@ -18,19 +18,31 @@ export const useBoxStore = defineStore('box', {
             this.boardTypeHandler = await this.readAllBox()
             for (let i = 0; i < this.boardTypeHandler.length; i++) {
                 this.lastBox = this.boardTypeHandler[i]
+                console.log(this.lastBox)
             }
+            console.log(this.lastBox)
             if (this.lastBox.boxType == 2) {
+                console.log(this.lastBox)
                 await client.request(createItem('columns', {boxId: this.lastBox.id, columnName: "First", columnNumber: 1, isEditing:0}))
                 await client.request(createItem('columns', {boxId: this.lastBox.id, columnName: "Second", columnNumber: 2, isEditing:0}))
                 await client.request(createItem('columns', {boxId: this.lastBox.id, columnName: "Third", columnNumber: 3, isEditing:0}))
             }
         },
-        async deleteBox(id) {
-            await client.request(deleteItem('box', id))
+        async deleteBox(item) {
+            if (item.boxType == 2) {
+                await client.request(deleteItems('columns', {
+                    filter:{
+                        boxId:{
+                            _eq: item.id
+                        }
+                    }
+                }))
+            }
+            await client.request(deleteItem('box', item.id))
             await client.request(deleteItems('item', {
               filter: {
                 boxId: {
-                  _eq: id,
+                  _eq: item.id,
                 },
               },
             }))

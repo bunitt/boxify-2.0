@@ -8,7 +8,7 @@ export const useColumnsStore = defineStore('columns', {
         allColumns: columnsFromDatabase,
     }),
     actions: {
-        async readAllColumns (url) {
+        async readSomeColumns (url) {
             return await client.request(readItems('columns', {
                 filter: {
                     boxId: {
@@ -16,6 +16,9 @@ export const useColumnsStore = defineStore('columns', {
                     }
                 }
             }))
+        },
+        async readAllColumns () {
+            return await client.request(readItems('columns'))
         },
         async changeColumnsName (col) {
             await client.request(updateItem('columns', col.id, {boxId: col.boxId, columnName: col.columnName, columnNumber: col.columnNumber, isEditing: 0}))

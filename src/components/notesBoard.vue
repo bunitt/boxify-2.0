@@ -113,7 +113,7 @@
     async function loadOnBoardType() {
         allBox.value = await boxFromStore.readAllBox()
         allItems.value = await notesFromStore.readAllNotes()
-        allColumns.value = await columnsFromStore.readAllColumns(uri[4])
+        allColumns.value = await columnsFromStore.readSomeColumns(uri[4])
         console.log(uri[4])
         first_column.value = []
         second_column.value = []
@@ -144,8 +144,6 @@
     watch(route, async () => { 
         uri = window.location.href.split('/')
         loadOnBoardType()
-        console.log(uri[4])
-        console.log("sdhibgsfjognpsf")
     })
 
     onMounted(async () => {

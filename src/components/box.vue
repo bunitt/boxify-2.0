@@ -13,10 +13,10 @@
                 <p v-else-if="box.boxType != 2" class="m-1 text-gray">{{ i.itemName }}</p>
             </div>
             <div v-if="box.boxType == 2" class="text-gray">
-                {{ inColumnNumber(box) }}
-                <p>First column: {{ columnOne }}</p>
-                <p>Second column: {{ columnTwo }}</p>
-                <p>Third column: {{ columnThree }}</p>
+                    {{ inColumnNumber(box) }}
+                    <p>{{ columnsNames[0] }}: {{ columnsNumber[0] }}</p>
+                    <p>{{ columnsNames[1] }}: {{ columnsNumber[1] }}</p>
+                    <p>{{ columnsNames[2] }}: {{ columnsNumber[2] }}</p>
             </div>
             <button v-if="box.isEditing == 0" class="px-3.5 min-h-9 rounded-lg bg-purple text-purplewhite tracking-wider text-sm realshadow mt-3 mr-3 hover:bg-lgpurple1 focus:ring-4 focus:ring-purplefocus" @click="changeEditState(box)">EDIT</button>
             <button v-else class="px-3.5 min-h-9 rounded-lg bg-purple text-purplewhite tracking-wider text-sm realshadow mt-3 mr-3 hover:bg-lgpurple1 focus:ring-4 focus:ring-purplefocus" @click="changeEditState(box)">CONFIRM</button>
@@ -29,22 +29,25 @@
     import { onMounted, ref } from 'vue'    
     import { useBoxStore } from './stores/box.js';
     import { useNotesStore } from './stores/notes';
+    import { useColumnsStore } from './stores/columns';
+
     const notesFromStore = useNotesStore()
     const boxFromStore = useBoxStore()
+    const columnsFromStore = useColumnsStore()
 
     const imgs = ["/src/img/box-solid.svg", "/src/img/list-solid.svg", "/src/img/flipboard.svg"]
 
     const allBox = ref([])
     const allItems = ref([])
+    const allColumns = ref([])
     const isSorting = ref(false)
-    let columnOne = 0
-    let columnTwo = 0
-    let columnThree = 0
+    let columnsNumber = [0, 0, 0]
+    let columnsNames = ["", "", ""]
 
     async function deleteBox(item) {
         const confirmText = "Are you sure you want to delete?"
         if (confirm(confirmText)) {
-            await boxFromStore.deleteBox(item.id)
+            await boxFromStore.deleteBox(item)
             allBox.value = await boxFromStore.readAllBox()
         }
 
@@ -60,18 +63,30 @@
     }
 
     function inColumnNumber(box) {
-        columnOne = 0
-        columnTwo = 0
-        columnThree = 0
+        columnsNumber = [0, 0, 0]
+        columnsNames = ["", "", ""]
+
       
         allItems.value.forEach(element => {
             if (element.boxId == box.id) {
                 if (element.col == 1) {
-                    columnOne += 1
+                    columnsNumber[0] += 1
                 } else if (element.col == 2) {
-                    columnTwo += 1
+                    columnsNumber[1] += 1
                 } else {
-                    columnThree += 1
+                    columnsNumber[2] += 1
+                }
+            }
+        });
+
+        allColumns.value.forEach(element => {
+            if (element.boxId == box.id) {
+                if (element.columnNumber == 1) {
+                    columnsNames[0] = element.columnName
+                } else if (element.columnNumber == 2) {
+                    columnsNames[1] = element.columnName
+                } else {
+                    columnsNames[2] = element.columnName
                 }
             }
         });
@@ -90,6 +105,7 @@
     onMounted(async () => {
         allBox.value = await boxFromStore.readAllBox()
         allItems.value = await notesFromStore.readAllNotes()
+        allColumns.value = await columnsFromStore.readAllColumns()
     })
 
 </script>
