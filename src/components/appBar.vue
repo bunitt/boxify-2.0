@@ -22,9 +22,9 @@
 
     const text = ref("")
     const items = [
-        {id:0, name: 'Standard'},
-        {id:1, name: 'List'},
-        {id:2, name: 'Board'}]
+        {id: 0, name: 'Standard'},
+        {id: 1, name: 'List'},
+        {id: 2, name: 'Board'}]
     const select = ref({id: 0, value: 'Standard'})
 
     async function addBox() {

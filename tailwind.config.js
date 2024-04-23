@@ -18,6 +18,7 @@ export default {
       'gray': '#686161',
       'lgray': '#f6f6f6',
       'pink': '#c2185b',
+      'dgray': '#535353'
     },
     fontFamily: {
       sans: ["Roboto", 'sans-serif']

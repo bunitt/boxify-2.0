@@ -4,47 +4,47 @@
             {{ box.boxTitle }}
         </h3>
         <div>
-            <button class="px-3.5 min-h-9 rounded bg-purple text-purplewhite tracking-wider text-sm realshadow hover:bg-lgpurple1 focus:ring-4 focus:ring-purplefocus" @click="saveBoardChanges">SAVE CHANGES</button>
+            <button class="px-3.5 min-h-9 rounded bg-purple text-purplewhite tracking-wider text-sm realshadow hover:bg-lgpurple1 focus:ring-4 focus:ring-purplefocus" @click="saveBoardChanges">SAVE MANUALLY</button>
         </div>
         <div class="max-w-6xl w-full p-4 mr-auto ml-auto h-full">
             <div class="flex justify-between h-full">
                 <div class="w-1/4 h-full" v-for="column in allColumns.filter(e => {return e.columnNumber == 1})" :key="column.id">
-                    <p class="text-4xl" v-if="column.isEditing == 0" @click="editColumnName(column)"> {{ column.columnName }} </p>
+                    <p class="text-xl md:text-3xl lg:text-4xl flex items-center" v-if="column.isEditing == 0" @click="editColumnName(column)"> {{ column.columnName }} <img src="../img/pen-solid.svg" class="h-5 lg:h-7 ml-2"> </p>
                     <div v-else class="flex flex-row">
                         <input type="text" v-model="column.columnName" class="grid text-base w-3/4 h-9 bg-lgray border-b border-gray text-black focus:outline-none focus:border-b-black placeholder:text-gray" >
                         <button @click="editColumnName(column)" class="px-3.5 min-h-9 rounded bg-purple text-purplewhite tracking-wider text-sm realshadow hover:bg-lgpurple1 focus:ring-4 focus:ring-purplefocus">OK</button>
                     </div>
                     <draggable v-model="first_column" tag="ul" group="kolumny" class="h-full">
                         <template #item="{element: oneItem}">
-                            <div class="block overflow-hidden break-words relative cursor-pointer text-center rounded-lg p-5 m-2 realshadow bg-white" @dblclick="deleteItemFromBox(oneItem)">
+                            <div class="block overflow-hidden break-words relative cursor-pointer text-center rounded-lg p-5 m-2 realshadow bg-white min-w-24" @dblclick="deleteItemFromBox(oneItem)">
                                 {{ oneItem.itemName }}
                             </div>
                         </template>
                     </draggable>
                 </div>
                 <div class="w-1/4 h-full" v-for="column in allColumns.filter(e => {return e.columnNumber == 2})" :key="column.id">
-                    <p class="text-4xl" v-if="column.isEditing == 0" @click="editColumnName(column)">{{ column.columnName }}</p>
+                    <p class="text-xl md:text-3xl lg:text-4xl flex items-center" v-if="column.isEditing == 0" @click="editColumnName(column)">{{ column.columnName }} <img src="../img/pen-solid.svg" class="h-5 lg:h-7 ml-2"> </p>
                     <div v-else class="flex flex-row">
                         <input type="text" v-model="column.columnName" class="grid text-base w-3/4 h-9 bg-lgray border-b border-gray text-black focus:outline-none focus:border-b-black placeholder:text-gray" >
                         <button @click="editColumnName(column)" class="px-3.5 min-h-9 rounded bg-purple text-purplewhite tracking-wider text-sm realshadow hover:bg-lgpurple1 focus:ring-4 focus:ring-purplefocus">OK</button>
                     </div>
                     <draggable v-model="second_column" tag="ul" group="kolumny" class="h-full">
                         <template #item="{element: oneItem}">
-                            <div class="block overflow-hidden break-words relative cursor-pointer text-center rounded-lg p-5 m-2 realshadow bg-white" @dblclick="deleteItemFromBox(oneItem)">
+                            <div class="block overflow-hidden break-words relative cursor-pointer text-center rounded-lg p-5 m-2 realshadow bg-white min-w-24" @dblclick="deleteItemFromBox(oneItem)">
                                 {{ oneItem.itemName }}
                             </div>
                         </template>
                     </draggable>
                 </div>
                 <div class="w-1/4 h-full" v-for="column in allColumns.filter(e => {return e.columnNumber == 3})" :key="column.id">
-                    <p class="text-4xl" v-if="column.isEditing == 0" @click="editColumnName(column)"> {{ column.columnName }}</p>
+                    <p class="text-xl md:text-3xl lg:text-4xl flex items-center" v-if="column.isEditing == 0" @click="editColumnName(column)"> {{ column.columnName }} <img src="../img/pen-solid.svg" class="h-5 lg:h-7 ml-2"> </p>
                     <div v-else class="flex flex-row">
                         <input type="text" v-model="column.columnName" class="grid text-base w-3/4 h-9 bg-lgray border-b border-gray text-black focus:outline-none focus:border-b-black placeholder:text-gray" >
                         <button @click="editColumnName(column)" class="px-3.5 min-h-9 rounded bg-purple text-purplewhite tracking-wider text-sm realshadow hover:bg-lgpurple1 focus:ring-4 focus:ring-purplefocus">OK</button>
                     </div>
                     <draggable v-model="third_column" tag="ul" group="kolumny" class="h-full">
                         <template #item="{element: oneItem}">
-                            <div class="block overflow-hidden break-words relative cursor-pointer text-center rounded-lg p-5 m-2 realshadow bg-white" @dblclick="deleteItemFromBox(oneItem)">
+                            <div class="block overflow-hidden break-words relative cursor-pointer text-center rounded-lg p-5 m-2 realshadow bg-white min-w-24" @dblclick="deleteItemFromBox(oneItem)">
                                 {{ oneItem.itemName }}
                             </div>
                         </template>
@@ -57,7 +57,7 @@
 
 
 <script setup>
-    import { onMounted, ref, watch } from 'vue'    
+    import { onMounted, ref, watch, onUnmounted } from 'vue'    
     import draggable from 'vuedraggable'
     import { useBoxStore } from './stores/box.js';
     import { useNotesStore } from './stores/notes.js'
@@ -144,6 +144,10 @@
     watch(route, async () => { 
         uri = window.location.href.split('/')
         loadOnBoardType()
+    })
+
+    onUnmounted(() => {
+        saveBoardChanges()
     })
 
     onMounted(async () => {

@@ -8,15 +8,30 @@
                 {{ box.boxTitle }}
             </p>
             <input type="text" v-model="box.boxTitle" class="grid text-base w-3/4 h-9 bg-lgray border-b border-gray text-black focus:outline-none focus:border-b-black placeholder:text-gray" placeholder="Type new box name" v-else>
-            <div v-for="i in allItems.filter(e => {return e.boxId == box.id})" :key="i.id">
-                <p v-if="i.isCharacterize == 1" class="m-1 line-through text-pink">{{ i.itemName }}</p>
-                <p v-else-if="box.boxType != 2" class="m-1 text-gray">{{ i.itemName }}</p>
-            </div>
-            <div v-if="box.boxType == 2" class="text-gray">
-                    {{ inColumnNumber(box) }}
-                    <p>{{ columnsNames[0] }}: {{ columnsNumber[0] }}</p>
-                    <p>{{ columnsNames[1] }}: {{ columnsNumber[1] }}</p>
-                    <p>{{ columnsNames[2] }}: {{ columnsNumber[2] }}</p>
+            <div class="flex flex-row">
+                <div v-if="box.isShowed == 1" class="w-4/5">
+                    <div class="flex flex-col m-0" v-if="box.boxType != 2">
+                        <div v-for="i in allItems.filter(e => {return e.boxId == box.id})" :key="i.id" class="ml-1">
+                            <p v-if="i.isCharacterize == 1" class="line-through text-pink">{{ i.itemName }}</p>
+                            <p v-else-if="box.boxType != 2" class="text-gray">{{ i.itemName }}</p>
+                        </div>
+                    </div>
+                    <div v-if="box.boxType == 2" class="text-gray text-left">
+                            {{ inColumnNumber(box) }}
+                            <p>{{ columnsNames[0] }}: {{ columnsNumber[0] }}</p>
+                            <p>{{ columnsNames[1] }}: {{ columnsNumber[1] }}</p>
+                            <p>{{ columnsNames[2] }}: {{ columnsNumber[2] }}</p>
+                    </div>
+                </div>
+                <div v-else class="w-4/5">
+                    <div class="bg-lgray text-dgray p-1 rounded-md text-center w-10">
+                        ...
+                    </div>
+                </div>
+                <div class="w-1/5 flex place-content-end">
+                    <img v-if="box.isShowed == 1" src="../img/chevron-down-solid.svg" class="h-7 mr-2 cursor-pointer" @click="showAndHideNotes(box)">
+                    <img v-else src="../img/chevron-up-solid.svg" class="h-7 mr-2 cursor-pointer" @click="showAndHideNotes(box)">
+                </div>
             </div>
             <button v-if="box.isEditing == 0" class="px-3.5 min-h-9 rounded-lg bg-purple text-purplewhite tracking-wider text-sm realshadow mt-3 mr-3 hover:bg-lgpurple1 focus:ring-4 focus:ring-purplefocus" @click="changeEditState(box)">EDIT</button>
             <button v-else class="px-3.5 min-h-9 rounded-lg bg-purple text-purplewhite tracking-wider text-sm realshadow mt-3 mr-3 hover:bg-lgpurple1 focus:ring-4 focus:ring-purplefocus" @click="changeEditState(box)">CONFIRM</button>
@@ -50,7 +65,6 @@
             await boxFromStore.deleteBox(item)
             allBox.value = await boxFromStore.readAllBox()
         }
-
     }
 
     async function changeEditState(item) {
@@ -60,6 +74,15 @@
       } else {
         item.isEditing = 1
       }
+    }
+
+    function showAndHideNotes(item) {
+        if (item.isShowed == 1) {
+            item.isShowed = 0
+        } else {
+            item.isShowed = 1
+        }
+        boxFromStore.saveShowed(item)
     }
 
     function inColumnNumber(box) {

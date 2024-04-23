@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { createDirectus, readItems, rest, deleteItem, updateItem, createItem, deleteItems } from '@directus/sdk'
+import { createDirectus, readItems, rest, deleteItem, updateItem, createItem, deleteItems, updateItems } from '@directus/sdk'
 const client = createDirectus('http://localhost:8055/').with(rest());
 let boxFromDatabase = await client.request(readItems('box'))   
 
@@ -52,6 +52,11 @@ export const useBoxStore = defineStore('box', {
         },
         async sortBox() {
             return await client.request(readItems('box', { sort: ['boxTitle'] }))
+        },
+        async saveShowed(element) {
+            await client.request(updateItem('box', element.id, {
+                isShowed: element.isShowed
+            }))
         }
     }
 })
